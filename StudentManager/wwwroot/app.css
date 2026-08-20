@@ -1,0 +1,72 @@
+/* app.css */
+:root {
+    --bg-sidebar: #1c1c2d;
+    --bg-content: #f8f9fa; /* Soft light grey background for main area */
+    --text-dark: #1c1c2d; /* Deep charcoal for visibility */
+    --text-muted: #64748b; /* For labels and sub-text */
+    --accent-purple: #9d76f1;
+    --accent-ochre: #BE9A60; /* Restored from palette */
+    --accent-sage: #CEDDBB; /* Restored from palette */
+}
+
+body {
+    background-color: var(--bg-content) !important;
+    color: var(--text-dark);
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- HEADINGS VISIBILITY --- */
+/* Forces all main page headings to be dark and visible against light background */
+h1, h2, h3, h4, h5, h6,
+.main h2, .main h3, .main h5, .main .display-6,
+.page-header-title {
+    color: var(--text-dark) !important;
+    font-weight: 800 !important;
+    margin-bottom: 0.5rem;
+}
+
+/* Fix for the Top Header (May 01, 2026 text) */
+.text-muted.fw-bold {
+    color: var(--text-muted) !important;
+}
+
+/* --- SIDEBAR & NAV --- */
+/* Ensures Sidebar stays dark with bright text */
+.sidebar {
+    background-color: var(--bg-sidebar) !important;
+}
+
+    .sidebar .nav-link {
+        color: #a0a0b8 !important; /* Soft grey for inactive */
+        font-weight: 500;
+    }
+
+        .sidebar .nav-link.active {
+            color: #ffffff !important; /* Bright white for active */
+            background-color: var(--accent-purple) !important;
+            box-shadow: 0 4px 12px rgba(157, 118, 241, 0.3);
+        }
+
+/* --- CARDS & UI ELEMENTS --- */
+.card {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+    border-radius: 20px !important;
+}
+
+/* Fixes for table text visibility */
+.table {
+    color: var(--text-dark) !important;
+}
+
+    .table thead th {
+        color: var(--text-muted) !important;
+        border-bottom: 2px solid #f1f5f9;
+    }
+
+/* Circle Stat Labels */
+.stat-circle small {
+    color: var(--text-muted) !important;
+    letter-spacing: 1px;
+}

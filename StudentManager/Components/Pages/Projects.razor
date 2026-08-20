@@ -1,0 +1,142 @@
+﻿@page "/projects"
+@using FreelancerClientTracker.Data
+@using FreelancerClientTracker.Models
+@using Microsoft.EntityFrameworkCore
+@inject AppDbContext db
+@rendermode InteractiveServer
+
+<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold" style="color: #434343;">Project Pipeline</h3>
+        <button class="btn text-white rounded-pill px-4 shadow-sm" style="background: #BE9A60;" @onclick="ToggleAdd">
+            @(showAdd ? "✕ Cancel" : "+ New Project")
+        </button>
+    </div>
+
+    @if (showAdd)
+    {
+        <div class="card border-0 shadow-sm p-4 mb-5 rounded-4 bg-white" style="border: 1px solid #eee !important;">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="small fw-bold text-muted">Project Name</label>
+                    <input class="form-control rounded-3" @bind="newProj.Title" />
+                </div>
+                <div class="col-md-4">
+                    <label class="small fw-bold text-muted">Assign Client</label>
+                    <select class="form-select rounded-3" @bind="newProj.ClientId">
+                        <option value="0">-- Select --</option>
+                        @foreach (var c in clientList)
+                        {
+                            <option value="@c.Id">@c.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="small fw-bold text-muted">Deadline</label>
+                    <input type="date" class="form-control rounded-3" @bind="newProj.Deadline" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-dark w-100 rounded-3 py-2" @onclick="SaveProject">Save</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row g-4">
+        @* Column 1: Pending *@
+        <div class="col-md-4">
+            <div class="kanban-column">
+                <h6 class="fw-bold text-muted mb-3">PENDING</h6>
+                @foreach (var p in projectList.Where(x => x.Status == "Pending"))
+                {
+                    <div class="kanban-card shadow-sm">
+                        <h6 class="fw-bold">@p.Title</h6>
+                        <button class="btn btn-sm w-100 mt-2 rounded-pill text-white" style="background: #434343;" 
+                                @onclick="() => StartProject(p)">Start</button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @* Column 2: Active *@
+        <div class="col-md-4">
+            <div class="kanban-column">
+                <h6 class="fw-bold mb-3" style="color: #BE9A60;">ACTIVE</h6>
+                @foreach (var p in projectList.Where(x => x.Status == "Active"))
+                {
+                    <div class="kanban-card shadow-sm border-start border-4" style="border-color: #BE9A60 !important;">
+                        <h6 class="fw-bold">@p.Title</h6>
+                        <button class="btn btn-sm w-100 mt-2 rounded-pill text-white" style="background: #BE9A60;" 
+                                @onclick="() => CompleteProject(p)">Finish</button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @* Column 3: Completed *@
+        <div class="col-md-4">
+            <div class="kanban-column">
+                <h6 class="fw-bold mb-3" style="color: #CEDDBB;">COMPLETED</h6>
+                @foreach (var p in projectList.Where(x => x.Status == "Completed"))
+                {
+                    <div class="kanban-card shadow-sm opacity-75">
+                        <h6 class="fw-bold text-decoration-line-through">@p.Title</h6>
+                        <span class="badge w-100 py-2 rounded-pill" style="background: #CEDDBB; color: #434343;">Archived</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .kanban-column { background: #f8fafc; border-radius: 20px; padding: 1.5rem; min-height: 70vh; }
+    .kanban-card { background: white; border-radius: 15px; padding: 1.25rem; margin-bottom: 1rem; border: none; }
+</style>
+
+@code {
+    bool showAdd = false;
+    Project newProj = new() { Deadline = DateTime.Now, Status = "Pending" };
+    List<Project> projectList = new();
+    List<Client> clientList = new();
+
+    protected override void OnInitialized() => Refresh();
+
+    void Refresh() {
+        projectList = db.Projects.ToList();
+        clientList = db.Clients.ToList();
+    }
+
+    void ToggleAdd() => showAdd = !showAdd;
+
+    void SaveProject() {
+        if (!string.IsNullOrEmpty(newProj.Title) && newProj.ClientId != 0) {
+            db.Projects.Add(newProj);
+            db.SaveChanges();
+            newProj = new() { Deadline = DateTime.Now, Status = "Pending" };
+            showAdd = false;
+            Refresh();
+        }
+    }
+
+    // FIXED: Methods that handle the status strings safely
+    void StartProject(Project p) {
+        p.Status = "Active";
+        db.SaveChanges();
+        Refresh();
+    }
+
+    void CompleteProject(Project p) {
+        p.Status = "Completed";
+        
+        // Auto-create Payment
+        db.Payments.Add(new Payment {
+            ProjectId = p.Id,
+            Amount = 1500.00m,
+            Status = "Unpaid"
+        });
+        
+        db.SaveChanges();
+        Refresh();
+    }
+}

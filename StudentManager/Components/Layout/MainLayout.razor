@@ -1,0 +1,17 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page" style="display: flex;">
+    <div class="sidebar" style="width: 250px; background: #2c3e50; min-height: 100vh; position: fixed;">
+        <NavMenu />
+    </div>
+
+    <main style="margin-left: 250px; width: 100%; background: #f8f9fa; min-height: 100vh;">
+        <div class="top-row px-4 shadow-sm bg-white d-flex align-items-center justify-content-end" style="height: 60px;">
+            <span class="fw-bold text-muted">Admin Panel</span>
+        </div>
+
+        <article class="content px-4 py-3">
+            @Body
+        </article>
+    </main>
+</div>

@@ -1,0 +1,75 @@
+﻿@page "/clients"
+@using FreelancerClientTracker.Data
+@using FreelancerClientTracker.Models
+@inject AppDbContext db
+@rendermode InteractiveServer
+
+<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold" style="color: #434343;">Client Directory</h3>
+        <button class="btn text-white rounded-pill px-4" style="background: #BE9A60;" @onclick="() => showAddForm = !showAddForm">
+            @(showAddForm ? "Close Form" : "+ Add New Client")
+        </button>
+    </div>
+
+    @if (showAddForm)
+    {
+        <div class="card border-0 shadow-sm p-4 mb-4 rounded-4 animate-fade-in" style="background: #fdfdfd;">
+            <h6 class="fw-bold mb-3" style="color: #434343;">Client Details</h6>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" class="form-control rounded-3" @bind="newClient.Name" placeholder="Full Name" />
+                </div>
+                <div class="col-md-4">
+                    <input type="email" class="form-control rounded-3" @bind="newClient.Email" placeholder="Email Address" />
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control rounded-3" @bind="newClient.Phone" placeholder="Phone Number" />
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-dark w-100 rounded-3" @onclick="SaveClient">Save</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row g-3">
+        @foreach (var c in db.Clients.ToList())
+        {
+            <div class="col-md-3">
+                <div class="card h-100 border-0 shadow-sm p-4 rounded-4 bg-white">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold"
+                             style="width: 45px; height: 45px; background: #CEDDBB; color: #434343 !important;">
+                            @c.Name[0]
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-0 fw-bold" style="color: #434343;">@c.Name</h6>
+                            <span class="badge rounded-pill mt-1" style="background: #f1f5f9; color: #434343; font-size: 0.7rem;">Active Client</span>
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <p class="small text-muted mb-1"><i class="bi bi-envelope me-2"></i>@c.Email</p>
+                        <p class="small text-muted mb-0"><i class="bi bi-telephone me-2"></i>@c.Phone</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    bool showAddForm = false;
+    Client newClient = new();
+
+    void SaveClient()
+    {
+        if (!string.IsNullOrWhiteSpace(newClient.Name))
+        {
+            db.Clients.Add(newClient);
+            db.SaveChanges();
+            newClient = new(); // Reset the form
+            showAddForm = false; // Hide the form
+        }
+    }
+}

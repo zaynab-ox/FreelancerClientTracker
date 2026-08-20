@@ -1,0 +1,26 @@
+﻿@page "/login"
+@layout EmptyLayout
+@inject NavigationManager Nav
+
+<div class="d-flex align-items-center justify-content-center" style="height: 100vh; background: #1c1c2d;">
+    <div class="card p-5 shadow-lg border-0" style="width: 420px;">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold mb-1">CRAVEAT HUB</h2>
+            <p class="text-muted small">Please sign in to continue</p>
+        </div>
+
+        <div class="mb-3">
+            <label class="small fw-bold text-muted mb-2">EMAIL</label>
+            <input type="email" class="form-control bg-dark border-secondary text-white p-3" placeholder="admin@craveat.com" />
+        </div>
+
+        <div class="mb-4">
+            <label class="small fw-bold text-muted mb-2">PASSWORD</label>
+            <input type="password" class="form-control bg-dark border-secondary text-white p-3" placeholder="••••••••" />
+        </div>
+
+        <button class="btn w-100 py-3 fw-bold text-white" style="background: #9d76f1;" @onclick='() => Nav.NavigateTo("/")'>
+            Login to Dashboard
+        </button>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+﻿@* NavMenu.razor *@
+<div class="top-row ps-3 navbar navbar-dark" style="background: #1c1c2d;">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" style="color: #9d76f1;" href="">CRAVEAT HUB</a>
+    </div>
+</div>
+
+<div class="nav-scrollable" style="background: #252538;">
+    <nav class="flex-column p-2 mt-3">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link dark-link" href="" Match="NavLinkMatch.All">
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link dark-link" href="clients">
+                <i class="bi bi-people me-2"></i> Clients
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link dark-link" href="projects">
+                <i class="bi bi-kanban me-2"></i> Projects
+            </NavLink>
+        </div>
+        @* RESTORED PAYMENTS OPTION *@
+        <div class="nav-item px-3">
+            <NavLink class="nav-link dark-link" href="payments">
+                <i class="bi bi-cash-stack me-2"></i> Payments
+            </NavLink>
+        </div>
+    </nav>
+</div>
+
+<style>
+    .dark-link { color: #a0a0b8 !important; border-radius: 12px; margin-bottom: 5px; transition: 0.3s; padding: 10px 15px !important; }
+    .dark-link:hover { background: rgba(157, 118, 241, 0.1); color: white !important; }
+    .dark-link.active { background: #9d76f1 !important; color: white !important; box-shadow: 0 4px 12px rgba(157, 118, 241, 0.3); }
+</style>

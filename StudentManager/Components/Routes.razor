@@ -1,0 +1,15 @@
+﻿@using FreelancerClientTracker.Components.Layout
+
+<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        @* We use the full global name here to stop the error *@
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(FreelancerClientTracker.Components.Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(FreelancerClientTracker.Components.Layout.MainLayout)">
+            <p role="alert">Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>

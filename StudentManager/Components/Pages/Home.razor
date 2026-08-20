@@ -1,0 +1,133 @@
+﻿@page "/"
+@using FreelancerClientTracker.Data
+@inject AppDbContext db
+@rendermode InteractiveServer
+
+<div class="container-fluid mt-4 px-4">
+    @* Page Header - Using black for high visibility on light background *@
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h2 class="fw-bold m-0" style="color: #1c1c2d !important; font-size: 2.8rem; letter-spacing: -1px;">System Metrics</h2>
+            <p class="fw-bold" style="color: #64748b; margin-top: 5px;">Performance overview for May 2026</p>
+        </div>
+        <div class="text-end pb-2">
+            <span class="badge rounded-pill px-3 py-2 shadow-sm" style="background: #ffffff; color: #1c1c2d; border: 1px solid #e2e8f0;">
+                <i class="bi bi-calendar3 me-2"></i> @DateTime.Now.ToString("MMMM dd, yyyy")
+            </span>
+        </div>
+    </div>
+
+    @* Three Circle Distribution Section - White Box with Darker Icons *@
+    <div class="card border-0 shadow-sm p-5 mb-5" style="border-radius: 30px !important; background: #ffffff !important;">
+        <h5 class="fw-bold mb-5" style="color: #1c1c2d !important; letter-spacing: 1px; opacity: 0.8;">DATABASE DISTRIBUTION</h5>
+        <div class="row text-center g-4">
+            <div class="col-md-4">
+                <div class="stat-circle mx-auto" style="border-color: #CEDDBB;">
+                    <h1 class="display-3 fw-bold" style="color: #1c1c2d !important;">@db.Clients.Count()</h1>
+                    <small class="fw-bold text-muted" style="letter-spacing: 1px;">TOTAL CLIENTS</small>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="stat-circle mx-auto" style="border-color: #BE9A60;">
+                    <h1 class="display-3 fw-bold" style="color: #1c1c2d !important;">@db.Projects.Count(p => p.Status == "Active")</h1>
+                    <small class="fw-bold text-muted" style="letter-spacing: 1px;">ACTIVE WORK</small>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="stat-circle mx-auto" style="border-color: #9d76f1;">
+                    <h1 class="display-3 fw-bold" style="color: #1c1c2d !important;">@db.Payments.Count(p => p.Status == "Paid")</h1>
+                    <small class="fw-bold text-muted" style="letter-spacing: 1px;">PAID INVOICES</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Bottom Section - Optimized for high visibility *@
+    <div class="row g-4 mb-4">
+        @* Recent Project Activity - Clear List *@
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 25px !important; background: #ffffff !important;">
+                <h5 class="fw-bold mb-4" style="color: #1c1c2d !important;">Recent Project Activity</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr class="small fw-bold" style="color: #64748b; border-bottom: 2px solid #f1f5f9;">
+                                <th class="pb-3">PROJECT NAME</th>
+                                <th class="pb-3">DEADLINE</th>
+                                <th class="pb-3 text-end">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in db.Projects.Take(5).ToList())
+                            {
+                                <tr style="border-bottom: 1px solid #f8f9fa;">
+                                    <td class="fw-bold py-3" style="color: #434343;">@p.Title</td>
+                                    <td class="text-muted">@p.Deadline.ToString("MMM dd, yyyy")</td>
+                                    <td class="text-end">
+                                        <span class="badge rounded-pill px-3 py-2 shadow-sm"
+                                              style="background: @(p.Status == "Active" ? "#BE9A60" : "#CEDDBB"); color: #fff; font-size: 0.75rem;">
+                                            @p.Status.ToUpper()
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        @* Quick Summary - Fixed for visibility with white text on dark background *@
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg p-4 h-100" style="background: #252538 !important; border-radius: 25px !important;">
+                <h5 class="fw-bold text-white mb-4">Quick Summary</h5>
+                
+                <div class="mb-4 p-3 rounded-4" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                    <label class="small d-block fw-bold mb-1" style="color: #a0a0b8 !important; letter-spacing: 1.5px;">TOTAL EARNINGS</label>
+                    <h2 class="fw-bold m-0" style="color: #CEDDBB !important;">
+                        $@db.Payments.Where(x => x.Status == "Paid").Sum(x => x.Amount).ToString("N0")
+                    </h2>
+                </div>
+
+                <div class="p-3 rounded-4" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                    <label class="small d-block fw-bold mb-1" style="color: #a0a0b8 !important; letter-spacing: 1.5px;">PENDING BILLS</label>
+                    <h2 class="fw-bold m-0" style="color: #BE9A60 !important;">
+                        @db.Payments.Count(x => x.Status == "Unpaid")
+                    </h2>
+                </div>
+
+                <div class="mt-auto pt-4 text-center">
+                    <p class="small text-muted mb-0">System Status: <span style="color: #CEDDBB;">Active</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .stat-circle {
+        width: 210px;
+        height: 210px;
+        border-radius: 50%;
+        border: 12px solid #f1f5f9;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #ffffff;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+        .stat-circle:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            border-width: 14px;
+        }
+
+    .table-hover tbody tr:hover {
+        background-color: #fcfcfd !important;
+    }
+</style>
